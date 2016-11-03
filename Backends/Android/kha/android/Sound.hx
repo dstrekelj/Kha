@@ -1,25 +1,49 @@
 package kha.android;
 
-import android.media.SoundPool;
 import android.content.res.AssetFileDescriptor;
+import android.media.SoundPool;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
-import kha.audio1.AudioChannel;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 
 class Sound extends kha.Sound {
-	static var pool : SoundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
-	var soundid : Int;
+	static inline var MAX_STREAMS : Int = 4;
+	static inline var SRC_QUALITY : Int = 0;
+	static inline var PRIORITY : Int = 1;
+
+	public static var soundPool : SoundPool;
 	
-	public function new(file : AssetFileDescriptor) {
-		super();
-		soundid = pool.load(file, 1);
-	}
-	
-	public function play(): AudioChannel {
-		pool.play(soundid, 1, 1, 1, 0, 1);
-		return null;
+	public var soundId : Int;
+
+	@:noCompletion public static function _init(): Void {
+		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			var audioAttributes : AudioAttributes = new AudioAttributesBuilder()
+				.setUsage(AudioAttributes.USAGE_GAME)
+				.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+				.build();
+			
+			soundPool = new SoundPoolBuilder()
+				.setMaxStreams(MAX_STREAMS)
+				.setAudioAttributes(audioAttributes)
+				.build();
+		} else {
+			soundPool = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, SRC_QUALITY);
+		}
 	}
 
-	//override public function stop() : Void {
-	//	pool.stop(soundid);
-	//}
+	public function new(file : AssetFileDescriptor): Void {
+		super();
+		
+		soundId = soundPool.load(file, PRIORITY);
+	}
+
+	override public function uncompress(done: Void->Void): Void {
+		(uncompressedData != null) ? done() : super.uncompress(done);
+	}
+
+	override public function unload(): Void {
+		soundPool.unload(soundId);
+		super.unload();
+	}
 }

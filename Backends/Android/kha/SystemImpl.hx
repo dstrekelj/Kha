@@ -135,6 +135,8 @@ class SystemImpl {
 		var g2 = new Graphics2(framebuffer);
 		framebuffer.init(g1, g2, graphics);
 
+		kha.android.Sound._init();
+
 		Scheduler.start();
 
 		done();
