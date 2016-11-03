@@ -8,7 +8,7 @@ extern class SoundPool {
 	public function autoResume(): Void;
 	public function load(fd: AssetFileDescriptor, priority: Int): Int;
 	public function pause(streamID: Int): Void;
-	public function play(soundID: Int, leftVolume: Float, rightVolume: Float, priority: Int, loop: Int, rate: Float): Void;
+	public function play(soundID: Int, leftVolume: Float, rightVolume: Float, priority: Int, loop: Int, rate: Float): Int;
 	public function release(): Void;
 	public function resume(streamID: Int): Void;
 	public function setLoop(streamID: Int, loop: Int): Void;
