@@ -1,59 +1,88 @@
 package kha.android.audio1;
 
-import kha.android.Sound;
+import android.media.MediaPlayer;
 import kha.audio1.AudioChannel;
 
 class AndroidAudioChannel implements AudioChannel {
-	static var LOOP_NEVER : Int = 0;
-	static var LOOP_FOREVER : Int = -1;
-	static var PRIORITY : Int = 1;
-	static var RATE : Float = 1.0;
-	static var VOLUME_LEFT : Float = 1.0;
-	static var VOLUME_RIGHT : Float = 1.0;
-
 	public var length(get, null): Float; // Seconds
 	public var position(get, null): Float; // Seconds
-	public var volume(get, set): Float;
+	@:isVar public var volume(get, set): Float;
 	public var finished(get, null): Bool;
+	
+	public var mediaPlayer : MediaPlayer;
 
-	var soundId : Int;
-	var streamId : Int;
-	var loop : Int;
-
-	public function new(soundId : Int, loop : Bool): Void {
-		this.soundId = soundId;
-		this.loop = loop ? LOOP_FOREVER : LOOP_NEVER;
+	public function new(mediaPlayer: MediaPlayer): Void {
+		this.mediaPlayer = mediaPlayer;
 	}
 
 	public function play(): Void {
-		streamId = Sound.soundPool.play(soundId, VOLUME_LEFT, VOLUME_RIGHT, PRIORITY, loop, RATE);
+		mediaPlayer.start();
 	}
 
 	public function pause(): Void {
-		Sound.soundPool.pause(streamId);
+		mediaPlayer.pause();
 	}
 
 	public function stop(): Void {
-		Sound.soundPool.stop(streamId);
+		mediaPlayer.stop();
+		ChannelHandler.closeChannel(this);
 	}
 
+	/**
+	 * `mediaPlayer.getDuration()` returns duration in milliseconds,
+	 * or -1 if the media is streamed. 
+	 */
 	function get_length(): Float {
-		return -1;
+		var duration = mediaPlayer.getDuration();
+		if (duration == -1) return duration;
+		return duration / 1000;
 	}
 
+	/**
+	 * `mediaPlayer.getCurrentPosition()` returns the current position
+	 * in milliseconds.
+	 */
 	function get_position(): Float {
-		return -1;
+		return mediaPlayer.getCurrentPosition() / 1000;
 	}
 
 	function get_volume(): Float {
-		
+		return volume;
 	}
 
 	function set_volume(value: Float): Float {
-		Sound.soundPool.setVolume(streamId, value, value);
+		mediaPlayer.setVolume(value, value);
+		return volume = value;
 	}
 
 	function get_finished(): Bool {
-		return false;
+		return !mediaPlayer.isPlaying();
+	}
+}
+
+class ChannelHandler {
+	static var MAX_CHANNELS: Int = 16;
+	static var NUM_CHANNELS: Int = 0;
+
+	public static function openChannel(sound: kha.Sound): AndroidAudioChannel {
+		if (NUM_CHANNELS >= MAX_CHANNELS) return null;
+		
+		var sound: kha.android.Sound = cast sound;
+		
+		var player = new MediaPlayer();
+		player.setDataSource(sound.assetFileDescriptor.getFileDescriptor());
+		player.prepare();
+		
+		var channel = new AndroidAudioChannel(player);
+		NUM_CHANNELS += 1;
+
+		return channel;
+	} 
+
+	public static function closeChannel(channel: AndroidAudioChannel): Void {
+		channel.mediaPlayer.release();
+		channel.mediaPlayer = null;
+		channel = null;
+		NUM_CHANNELS -= 1;
 	}
 }
