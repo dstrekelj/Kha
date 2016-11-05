@@ -44,16 +44,58 @@ extern class MediaPlayer {
 	public function seekTo(msec: Int): Void;
 	public function setAudioSessionId(sessionId : Int): Void;
 	public function setAudioStreamType(streamtype: Int): Void;
-	public function setAuxEffectSendLevel(level: Float): Void;
+	public function setAuxEffectSendLevel(level: Single): Void;
 	@:overload(function(fd: FileDescriptor, offset: Long, length: Long): Void {})
 	@:overload(function(path: String): Void {})
 	@:overload(function(context: Context, uri: Uri): Void {})
 	public function setDataSource(fd: FileDescriptor): Void;
 	public function setDisplay(sh: SurfaceHolder): Void;
 	public function setLooping(looping: Bool): Void;
+	public function setOnBufferingUpdateListener(listener: OnBufferingUpdateListener): Void;
+	public function setOnCompletionListener(listener: OnCompletionListener): Void;
+	public function setOnErrorListener(listener: OnErrorListener): Void;
+	public function setOnInfoListener(listener: OnInfoListener): Void;
+	public function setOnPreparedListener(listener: OnPreparedListener): Void;
+	public function setOnSeekCompleteListener(listener: OnSeekCompleteListener): Void;
+	public function setOnVideoSizeChangedListener(listener: OnVideoSizeChangedListener): Void;
 	public function setScreenOnWhilePlaying(screenOn: Bool): Void;
-	public function setVolume(leftVolume: Float, rightVolume: Float): Void;
+	public function setVolume(leftVolume: Single, rightVolume: Single): Void;
 	public function setWakeMode(context: Context, mode: Int): Void;
 	public function start(): Void;
 	public function stop(): Void;
+}
+
+@:native("android.media.MediaPlayer.OnBufferingUpdateListener")
+extern interface OnBufferingUpdateListener {
+	function onBufferingUpdate(mp: MediaPlayer, percent: Int): Void;
+}
+
+@:native("android.media.MediaPlayer.OnCompletionListener")
+extern interface OnCompletionListener {
+	function onCompletion(mp: MediaPlayer): Void;
+}
+
+@:native("android.media.MediaPlayer.OnErrorListener")
+extern interface OnErrorListener {
+	function onError(mp: MediaPlayer, what: Int, extra: Int): Bool;
+}
+
+@:native("android.media.MediaPlayer.OnInfoListener")
+extern interface OnInfoListener {
+	function onInfo(mp: MediaPlayer, what: Int, extra: Int): Bool;
+}
+
+@:native("android.media.MediaPlayer.OnPreparedListener")
+extern interface OnPreparedListener {
+	function onPrepared(mp: MediaPlayer): Void;
+}
+
+@:native("android.media.MediaPlayer.OnSeekCompleteListener")
+extern interface OnSeekCompleteListener {
+	function onSeekComplete(mp: MediaPlayer): Void;
+}
+
+@:native("android.media.MediaPlayer.OnVideoSizeChangedListener")
+extern interface OnVideoSizeChangedListener {
+	function onVideoSizeChanged(mp: MediaPlayer, width: Int, height: Int): Void;
 }

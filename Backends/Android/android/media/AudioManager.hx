@@ -27,7 +27,6 @@ extern class AudioManager {
 	public static var FX_KEYPRESS_DELETE: Int;
 	public static var FX_KEYPRESS_RETURN: Int;
 	public static var FX_KEYPRESS_SPACEBAR: Int;
-	public static var FX_KEYPRESS_SPACEBAR: Int;
 	public static var FX_KEYPRESS_STANDARD: Int;
 	public static var FX_KEY_CLICK: Int;
 	public static var MODE_CURRENT: Int;
@@ -66,7 +65,7 @@ extern class AudioManager {
 	public function isMusicActive(): Bool;
 	public function isSpeakerphoneOn(): Bool;
 	public function loadSoundEffects(): Void;
-	@:overload(function(effectType: Int, volume: Float): Void {})
+	@:overload(function(effectType: Int, volume: Single): Void {})
 	public function playSoundEffect(effectType: Int): Void;
 	public function setBluetoothScoOn(on: Bool): Void;
 	public function setMicrophoneMute(on: Bool): Void;

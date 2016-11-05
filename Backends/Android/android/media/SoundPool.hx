@@ -8,13 +8,13 @@ extern class SoundPool {
 	public function autoResume(): Void;
 	public function load(fd: AssetFileDescriptor, priority: Int): Int;
 	public function pause(streamID: Int): Void;
-	public function play(soundID: Int, leftVolume: Float, rightVolume: Float, priority: Int, loop: Int, rate: Float): Int;
+	public function play(soundID: Int, leftVolume: Single, rightVolume: Single, priority: Int, loop: Int, rate: Single): Int;
 	public function release(): Void;
 	public function resume(streamID: Int): Void;
 	public function setLoop(streamID: Int, loop: Int): Void;
 	public function setPriority(streamID: Int, priority: Int): Void;
-	public function setRate(streamID: Int, rate: Float): Void;
-	public function setVolume(streamID: Int, leftVolume: Float, rightVolume: Float): Void;
+	public function setRate(streamID: Int, rate: Single): Void;
+	public function setVolume(streamID: Int, leftVolume: Single, rightVolume: Single): Void;
 	public function stop(streamID: Int): Void;
 	public function unload(soundID: Int): Bool;
 }
